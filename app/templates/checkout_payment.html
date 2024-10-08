@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Checkout - Payment{% endblock %}
+{% block page_content %}
+<div class="container mt-5">
+    <h2>Payment Information</h2>
+    <form method="POST" action="{{ url_for('orders.checkout_payment', shipping_address=shipping_address) }}" id="payment-form">
+        <div class="form-group">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Credit Card</h5>
+                    <input type="radio" id="credit-card" name="payment_method" value="Card">
+                    <label for="credit-card">Pay with Credit Card</label>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">PayPal</h5>
+                    <input type="radio" id="paypal" name="payment_method" value="Paypal">
+                    <label for="paypal">Pay with PayPal</label>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Klarna</h5>
+                    <input type="radio" id="klarna" name="payment_method" value="Klarna">
+                    <label for="klarna">Pay with Klarna</label>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="confirm-order-btn" disabled>Confirm Order</button>
+    </form>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const paymentForm = document.getElementById('payment-form');
+        const confirmOrderBtn = document.getElementById('confirm-order-btn');
+        const paymentMethods = paymentForm.querySelectorAll('input[name="payment_method"]');
+        paymentMethods.forEach(method => {
+            method.addEventListener('change', function() {
+                confirmOrderBtn.disabled = false;
+            });
+        });
+    });
+</script>
+{% endblock %}

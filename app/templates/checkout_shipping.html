@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Checkout - Shipping{% endblock %}
+{% block page_content %}
+<div class="container mt-5">
+    <h2>Shipping Information</h2>
+    
+    {% if saved_address %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Saved Address</h5>
+            <p>{{ saved_address }}</p>
+            <form method="POST">
+                <button type="submit" name="proceed_to_payment" class="btn btn-success mb-3">Proceed to payment</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+    
+    <a href="{{ url_for('orders.checkout_shipping_address') }}" class="btn btn-primary mt-5">Use a different address</a>
+</div>
+{% endblock %}

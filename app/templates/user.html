@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Profilo di {{ user.username }}{% endblock %}
+
+{% block page_content %}
+<div class="profile-container">
+    <h1>Profilo di {{ user.username }}</h1>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Nome:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+    <p><strong>Data di registrazione:</strong> {{ user.created_at.strftime('%d/%m/%Y') }}</p>
+    
+    
+</div>
+{% endblock %}

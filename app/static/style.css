@@ -1,0 +1,65 @@
+/* Navbar custom styles */
+.navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e7e7e7;
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.navbar-nav .nav-link {
+    color: #555555;
+    padding: 0.5rem 1rem;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #007bff;
+}
+
+.navbar-nav .dropdown-menu {
+    border-radius: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-nav .dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:focus {
+    outline: none;
+}
+
+.form-inline .form-control {
+    border-radius: 0;
+    margin-right: 0.5rem;
+}
+
+.form-inline .btn {
+    border-radius: 0;
+}
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-collapse {
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+}
+
+.mt-5 {
+    margin-top: 3rem; /* Aggiungi un margine superiore di 3rem */
+}

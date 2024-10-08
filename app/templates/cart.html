@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Your Cart{% endblock %}
+
+{% block page_content %}
+<div class="container">
+    <h1>Your Cart</h1>
+    
+    {% if products %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in products %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control" data-product-id="{{ item.product.id }}">
+                        </td>
+                        <td>{{ item.product.price }}</td>
+                        <td>{{ item.product.price * item.quantity }}</td>
+                        <td>
+                            <button class="btn btn-primary update-cart" data-product-id="{{ item.product.id }}">Update</button>
+                            <button class="btn btn-danger remove-from-cart" data-product-id="{{ item.product.id }}">Remove</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <form method="POST" action="{{ url_for('orders.checkout_shipping') }}">
+            <button type="submit" class="btn btn-success">Proceed to Checkout</button>
+        </form>
+    {% else %}
+        <p>Your cart is empty. <a href="{{ url_for('products.all_products') }}">Start shopping</a></p>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.update-cart').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            const quantity = this.closest('tr').querySelector('input[name="quantity"]').value;
+            
+            fetch('/api/cart', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ product_id: productId, quantity: quantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    location.reload();
+                } else {
+                    alert(data.error);
+                }
+            });
+        });
+    });
+
+    document.querySelectorAll('.remove-from-cart').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            const row = this.closest('tr'); 
+            
+            fetch('/api/cart', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ product_id: productId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    
+                    if (row) {
+                        row.remove();
+                    }
+    
+                    if (document.querySelectorAll('tbody tr').length === 0) {
+                        document.querySelector('.container').innerHTML = `<p>Your cart is empty. <a href="${productsUrl}">Start shopping</a></p>`;
+                    }
+                } else {
+                    alert(data.error);
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
