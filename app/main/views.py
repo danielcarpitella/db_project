@@ -15,7 +15,6 @@ def index():
 @login_required
 def user(username):
     user = User.query.filter_by(id=username).first_or_404()
-    a=1
     return render_template('user.html', user=user)
 
 
