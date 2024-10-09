@@ -63,3 +63,63 @@
 .mt-5 {
     margin-top: 3rem; /* Aggiungi un margine superiore di 3rem */
 }
+
+.card-header .card-title {
+    margin-bottom: 0;
+}
+
+.card-body .ml-3 {
+    margin-left: 1rem;
+}
+
+.card-body .d-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-body .text-secondary {
+    margin-top: 1rem;
+}
+
+.seller-order-card {
+    margin-left: 2rem; /* Sposta leggermente verso il centro gli ordini dei seller */
+}
+
+.container h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    border-radius: 0.5rem;
+}
+
+.card-header {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-body p {
+    margin-bottom: 0.5rem;
+}
+
+.card-body h6 {
+    margin-top: 1rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.card-body .seller-order-card {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+}
+
+.card-body .seller-order-card .card-body {
+    padding: 1rem;
+}

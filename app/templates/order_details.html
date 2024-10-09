@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Order Details{% endblock %}
+{% block page_content %}
+<div class="container mt-5">
+    <h2>Order Details</h2>
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">Order #{{ store_order.id }}</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Seller:</strong> {{ store_order.seller.store_name }}</p>
+            <p><strong>Status:</strong> {{ store_order.order_status }}</p>
+            <p><strong>Placed on:</strong> {{ store_order.order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+            <h5 class="mt-4">Products Ordered:</h5>
+            <ul>
+                {% for item in products_ordered %}
+                <li>{{ item.product.name }} - Quantity: {{ item.quantity }} - Price: {{ item.product.price }}€</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -45,6 +45,7 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                             <a class="dropdown-item" href="{{ url_for('main.user', username=current_user.id) }}">Profilo</a>
+                            <a class="dropdown-item" href="{{ url_for('orders.buyer_orders') }}">My Orders</a>
                             <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
                         </div>
                     </li>
@@ -56,12 +57,10 @@
                         <a class="nav-link" href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus"></i> Registrati</a>
                     </li>
                 {% endif %}
-
             </ul>
         </div>
     </div>
 </nav>
-
 {% endblock %}
 
 {% block content %}
@@ -72,7 +71,6 @@
         {{ message }}
     </div>
     {% endfor %}
-
     {% block page_content %}{% endblock %}
 </div>
 {% endblock %}

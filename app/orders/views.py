@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, flash, request, session, abort
 from flask_login import login_required, current_user
 from app.orders import orders
-from app.models import Order, Product, Cart, ProductsCart, SellerOrder, ProductOrderQuantity, Buyer
+from app.models import Order, Product, Cart, ProductsCart, SellerOrder, ProductOrderQuantity, Buyer, User
 from app import db
 from .forms import ShippingForm
 
@@ -116,9 +116,81 @@ def checkout_confirmation():
     return render_template('checkout_confirmation.html', order=order, products_ordered=products_ordered)
 
 
+@orders.route('/orders')
+@login_required
+def buyer_orders():
+    orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).all()
+    seller_orders = SellerOrder.query.filter(SellerOrder.buyer_order_id.in_([order.id for order in orders])).all()
+    
+    orders_dict = {}
+    for order in orders:
+        orders_dict[order.id] = {
+            'order': order,
+            'seller_orders': [so for so in seller_orders if so.buyer_order_id == order.id]
+        }
+    
+    return render_template('orders.html', orders=orders_dict)
+
+
+@orders.route('/orders/<int:store_order_id>')
+@login_required
+def store_order_detail(store_order_id):
+    
+    store_order = SellerOrder.query.get_or_404(store_order_id)
+    
+    # Verifies that the order belongs to the current user 
+    buyer_order = Order.query.get(store_order.buyer_order_id)
+    if buyer_order.user_id != current_user.id:
+        abort(403)
+    
+    products_ordered = ProductOrderQuantity.query.filter_by(order_id=store_order.buyer_order_id).all()
+    products_ordered = [po for po in products_ordered if po.product.user_id == store_order.seller_id]    
+    
+    return render_template('order_details.html', store_order=store_order, products_ordered=products_ordered)
+
+
 @orders.route('/seller/orders')
 @login_required
 def seller_orders():
     if not current_user.seller:
         abort(403)
     
+    seller_orders = SellerOrder.query.filter_by(seller_id=current_user.id).order_by(SellerOrder.created_at.desc()).all()
+    
+    orders_list = []
+    for seller_order in seller_orders:
+        buyer_order = Order.query.get(seller_order.buyer_order_id)
+        
+        orders_list.append({
+            'order_id': seller_order.order_id,
+            'created_at': buyer_order.created_at,
+            'order_status': seller_order.order_status,
+            'buyer_name': buyer_order.buyer.user.first_name
+        })
+    
+    return render_template('sellers_orders.html', orders=orders_list)
+
+
+@orders.route('/seller/orders/<int:order_id>', methods=['GET', 'POST'])
+@login_required
+def seller_order_detail(order_id):
+    seller_order = SellerOrder.query.get_or_404(order_id)
+    
+    if seller_order.seller_id != current_user.id:
+        abort(403)
+    
+    if request.method == 'POST':
+        new_status = request.form.get('order_status')
+        if new_status in ['Pending', 'Shipped', 'Delivered']:
+            seller_order.order_status = new_status
+            db.session.commit()
+            flash('Order status updated successfully.', 'success')
+        else:
+            flash('Invalid order status.', 'danger')
+    
+    buyer_order = Order.query.get(seller_order.buyer_order_id)
+    products_ordered = ProductOrderQuantity.query.filter_by(order_id=seller_order.buyer_order_id).all()
+    products_ordered = [po for po in products_ordered if po.product.user_id == seller_order.seller_id]
+    
+    return render_template('sellers_orders_details.html', seller_order=seller_order, buyer_order=buyer_order, products_ordered=products_ordered)
+
