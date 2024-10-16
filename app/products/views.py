@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from app.products import products
 from ..models import Product, Category, Review, Seller
 from app import db
-from .forms import EditProductForm
+from .forms import EditProductForm, ReviewForm
 from functools import wraps
 
 
@@ -26,15 +26,36 @@ def all_products():
     return render_template('products.html', products=products, categories=categories)
 
 
+# seba: ho messo le recensioni direttamente nella schermata del prodotto, sarebbe bello che il form per scrivere la recensione comparisse e scomparisse (javascript)
 
-@products.route('/product/<int:product_id>')
+@products.route('/product/<int:product_id>', methods=['GET', 'POST'])
 def single_product(product_id):
     product = Product.query.get_or_404(product_id)
-    reviews = Review.query.filter_by(product_id=product_id).all()
-    return render_template('singleproduct.html', product=product, reviews=reviews)
+    user_review = Review.query.filter_by(product_id=product_id, user_id=current_user.id).first()
+    form = ReviewForm(obj=user_review)
+
+    if form.validate_on_submit():
+        if not Review.query.filter_by(product_id=product_id, user_id=current_user.id).first():
+            review = Review (
+                user_id = current_user.id,
+                product_id = product_id,
+                rate = form.rate.data,
+                title = form.title.data,
+                description = form.description.data
+            )
+            db.session.add(review)
+        else:
+            user_review.rate = form.rate.data
+            user_review.title = form.title.data
+            user_review.description = form.description.data
+        db.session.commit()
 
 
-# seba ha fatto da qua in giù
+    reviews = Review.query.filter_by(product_id=product_id).order_by(Review.created_at.desc()).all()
+    return render_template('single_product.html', product=product, reviews=reviews, form=form)
+
+
+# seba ha fatto da qua in giù per quanto riguarda seller-products
 
 
 def seller_required(f):

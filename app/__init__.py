@@ -50,4 +50,7 @@ def create_app():
     from app.orders import orders as orders_blueprint
     app.register_blueprint(orders_blueprint)
 
+    from app.reviews import reviews as reviews_blueprint
+    app.register_blueprint(reviews_blueprint)
+
     return app

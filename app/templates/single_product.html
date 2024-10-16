@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}{{ product.name }}{% endblock %}
 
@@ -17,6 +18,10 @@
     <div class="row mt-5">
         <div class="col-md-12">
             <h2>Reviews</h2>
+
+            <h3>Scrivi una recensione</h3>
+            {{ wtf.quick_form(form) }}
+
             {% for review in reviews %}
             <div class="card mb-3">
                 <div class="card-body">
