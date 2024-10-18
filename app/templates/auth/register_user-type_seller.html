@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Seller Registration{% endblock %}
+{% block page_content %}
+<div class="container">
+    <h1>Seller Registration</h1>
+    <form method="POST">
+        <div class="form-group">
+            <label for="store_name">Store Name:</label>
+            <input type="text" class="form-control" id="store_name" name="store_name" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Complete Registration</button>
+    </form>
+</div>
+{% endblock %}

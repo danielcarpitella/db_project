@@ -28,3 +28,11 @@ class EditProfileForm(FlaskForm):
     payment_method = SelectField('Payment Method', choices=[('Card', 'Card'), ('Paypal', 'Paypal'), ('Klarna', 'Klarna')], validators=[DataRequired()])
     submit = SubmitField('Save changes')
 
+
+class EditSellerProfileForm(FlaskForm):
+    first_name = StringField('First Name', validators=[DataRequired(), Length(min=1, max=50)])
+    last_name = StringField('Last Name', validators=[DataRequired(), Length(min=1, max=50)])
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=100)])
+    phone = StringField('Phone Number', validators=[DataRequired(), Length(min=1, max=20)])
+    store_name = StringField('Store Name', validators=[DataRequired(), Length(min=1, max=100)])
+    submit = SubmitField('Save changes')
