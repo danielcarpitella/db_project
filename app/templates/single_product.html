@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}I Miei Prodotti{% endblock %}
-{% block title %}I Miei Prodotti{% endblock %}
+{% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
@@ -31,10 +30,8 @@
                 </div>
             </div>
             {% endfor %}
-        </tbody>
-    </table>
-        </tbody>
-    </table>
+        </div>
+    </div>
 </div>
 
 <script>
