@@ -16,8 +16,3 @@ class EditProductForm(FlaskForm):
     submit = SubmitField('Update')
 
 
-class ReviewForm(FlaskForm):
-    rate = IntegerField('Rate', validators=[DataRequired(), NumberRange(min=1, max=5, message="Il voto deve essere tra 1 e 5")])
-    title = StringField('Title', validators=[DataRequired()])
-    description = TextAreaField('Body', validators=[DataRequired()])
-    submit = SubmitField('Submit')

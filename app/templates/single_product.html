@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}{{ product.name }}{% endblock %}
 
@@ -19,8 +18,7 @@
         <div class="col-md-12">
             <h2>Reviews</h2>
 
-            <h3>Scrivi una recensione</h3>
-            {{ wtf.quick_form(form) }}
+            <a href="{{ url_for('reviews.product_review', product_id=product.id) }}" class="btn btn-warning btn-sm">Modifica</a>
 
             {% for review in reviews %}
             <div class="card mb-3">
