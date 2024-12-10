@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Add Seller Type{% endblock %}
+{% block page_content %}
+<div class="container">
+    <h1>Add Seller Type</h1>
+    {% if is_buyer %}
+    <form method="POST">
+        <div class="form-group">
+            <label for="store_name">Store Name:</label>
+            <input type="text" class="form-control" id="store_name" name="store_name" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Become a Seller</button>
+    </form>
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+        You are not a buyer. Only buyers can become sellers.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

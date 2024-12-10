@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ product.name }}{% endblock %}
+{% block title %}I Miei Prodotti{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
@@ -30,35 +30,7 @@
                 </div>
             </div>
             {% endfor %}
-        </div>
-    </div>
+        </tbody>
+    </table>
 </div>
-
-<script>
-    $(document).ready(function() {
-        $('#add-to-cart').click(function() {
-            const productId = $(this).data('product-id');
-            $.ajax({
-                url: '/api/cart',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ product_id: productId }),
-                success: function(data) {
-                    if (data.message === 'Product already in cart') {
-                        alert('Product already in cart!');
-                    } else {
-                        alert('Product added to cart!');
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    if (jqXHR.status === 401) {
-                        alert('You need to log in to add products to the cart.');
-                    } else {
-                        console.error('Error adding product to cart:', textStatus, errorThrown);
-                    }
-                }
-            });
-        });
-    });
-</script>
 {% endblock %}

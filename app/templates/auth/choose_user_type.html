@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Choose User Type{% endblock %}
+{% block page_content %}
+<div class="container">
+    <h1>Choose User Type</h1>
+    <form method="POST">
+        <div class="form-group">
+            <label for="user_type">Select User Type:</label>
+            <select class="form-control" name="user_type">
+                <option value="buyer">Buyer</option>
+                <option value="seller">Seller</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Continue</button>
+    </form>
+</div>
+{% endblock %}
