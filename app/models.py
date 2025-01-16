@@ -60,7 +60,7 @@ class Buyer(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     shipping_address = db.Column(db.String, nullable=False)
-    payment_method = db.Column(db.String, nullable=False)
+    payment_method = db.Column(db.Enum('Card', 'Paypal', 'Klarna', name='payment_method'), default='Card')
     user = relationship('User', backref='buyer', uselist=False)
 
     def __repr__(self):

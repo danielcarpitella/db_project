@@ -61,11 +61,13 @@ def create_fake_users(session, num_users=10):
 
 def create_fake_buyers(session, num_buyers=10):
     users = session.query(User).all()
+    payment_methods = ['Card', 'Paypal', 'Klarna'] 
+    
     for user in users[:num_buyers]:
         buyer_data = {
             'user_id': user.id,
             'shipping_address': fake.address(),
-            'payment_method': fake.credit_card_provider()
+            'payment_method': random.choice(payment_methods)
         }
         buyer, created = get_or_create(session, Buyer, **buyer_data)
         if created:
@@ -73,7 +75,7 @@ def create_fake_buyers(session, num_buyers=10):
     session.commit()
 
 
-def create_fake_sellers(session, num_sellers=10):
+def create_fake_sellers(session, num_sellers=5):
     users = session.query(User).all()
     for user in users[:num_sellers]:
         seller_data = {
@@ -86,7 +88,7 @@ def create_fake_sellers(session, num_sellers=10):
     session.commit()
     
 
-def create_fake_categories(session, num_categories=10):
+def create_fake_categories(session, num_categories=5):
     for _ in range(num_categories):
         category_data = {
             'title': fake.word(),
@@ -117,9 +119,9 @@ def create_fake_products(session, num_products=20):
     session.commit()
 
 
-def create_fake_carts(session, num_carts=10):
+def create_fake_carts(session):
     buyers = session.query(Buyer).all()
-    for buyer in buyers[:num_carts]:
+    for buyer in buyers:
         cart_data = {
             'user_id': buyer.user_id
         }
@@ -127,20 +129,72 @@ def create_fake_carts(session, num_carts=10):
         if created:
             print(f'Created cart for buyer: {buyer.user_id}')
     session.commit()
-
-
-def create_fake_orders(session, num_orders=10):
-    buyers = session.query(Buyer).all()
-    for buyer in buyers[:num_orders]:
-        order_data = {
-            'user_id': buyer.user_id
-        }
-        order, created = get_or_create(session, Order, **order_data)
-        if created:
-            print(f'Created order for buyer: {buyer.user_id}')
-    session.commit()
-   
     
+def create_fake_products_cart(session):
+    carts = session.query(Cart).all()
+    products = session.query(Product).all()
+    
+    for cart in carts:
+        num_products_in_cart = random.randint(1, 6)  # Numero casuale di prodotti per ogni carrello
+        products_in_cart = random.sample(products, num_products_in_cart)  # Seleziona prodotti casuali per il carrello
+        
+        for product in products_in_cart:
+            entry_data = {
+                'product_id': product.id,
+                'cart_id': cart.id,
+                'quantity': random.randint(1, 5)
+            }
+            entry, created = get_or_create(session, ProductsCart, **entry_data)
+            if created:
+                print(f'Created product cart entry: {entry.product_id}, {entry.cart_id}')
+    
+    session.commit()
+
+
+def create_fake_orders(session):
+    buyers_with_cart = session.query(Buyer).join(Cart).all()
+    
+    for buyer in buyers_with_cart:
+        cart = session.query(Cart).filter_by(user_id=buyer.user_id).first()
+        if not cart or not cart.products:
+            continue
+        
+        total_amount = sum(product_cart.product.price * product_cart.quantity for product_cart in cart.products)
+        
+        order_data = {
+            'user_id': buyer.user_id,
+            'total': total_amount,
+            'shipping_address': buyer.shipping_address,
+            'payment_method': buyer.payment_method
+        }
+        with session.no_autoflush:
+            order, created = get_or_create(session, Order, **order_data)
+            if created:
+                print(f'Created order for buyer: {buyer.user_id} with total: {total_amount}')
+                
+                # Ensure the order is added to the session and committed
+                session.add(order)
+                session.flush()  # Ensure the order ID is generated
+                
+                # Create ProductOrderQuantity entries for each product in the cart
+                for product_cart in cart.products:
+                    entry_data = {
+                        'product_id': product_cart.product_id,
+                        'order_id': order.id,
+                        'quantity': product_cart.quantity
+                    }
+                    entry, created = get_or_create(session, ProductOrderQuantity, **entry_data)
+                    if created:
+                        print(f'Created product order quantity entry: {entry.product_id}, {entry.order_id}')
+                
+                # Clear the cart after creating the order
+                for product_cart in cart.products:
+                    session.delete(product_cart)
+                session.delete(cart)
+    
+    session.commit()
+    
+
 def create_fake_reviews(session, num_reviews=30):
     buyers = session.query(Buyer).all()
     products = session.query(Product).all()
@@ -155,37 +209,7 @@ def create_fake_reviews(session, num_reviews=30):
         review, created = get_or_create(session, Review, **review_data)
         if created:
             print(f'Created review: {review.title}')
-    session.commit()   
-      
-
-def create_fake_product_order_quantities(session, num_entries=10):
-    orders = session.query(Order).all()
-    products = session.query(Product).all()
-    for _ in range(num_entries):
-        entry_data = {
-            'product_id': random.choice(products).id,
-            'order_id': random.choice(orders).id,
-            'quantity': random.randint(1, 10)
-        }
-        entry, created = get_or_create(session, ProductOrderQuantity, **entry_data)
-        if created:
-            print(f'Created product order quantity entry: {entry.product_id}, {entry.order_id}')
-    session.commit()
-    
-
-def create_fake_products_cart(session, num_entries=20):
-    carts = session.query(Cart).all()
-    products = session.query(Product).all()
-    for _ in range(num_entries):
-        entry_data = {
-            'product_id': random.choice(products).id,
-            'cart_id': random.choice(carts).id,
-            'quantity': random.randint(1, 5) 
-        }
-        entry, created = get_or_create(session, ProductsCart, **entry_data)
-        if created:
-            print(f'Created product cart entry: {entry.product_id}, {entry.cart_id}')
-    session.commit()
+    session.commit()  
  
  
 def get_sellers_involved_in_order(session, order):
@@ -235,11 +259,10 @@ if __name__ == '__main__':
         create_fake_categories(db.session)
         create_fake_products(db.session)
         create_fake_carts(db.session)
-        create_fake_orders(db.session)
-        create_fake_reviews(db.session)
-        create_fake_product_order_quantities(db.session)
         create_fake_products_cart(db.session)
+        create_fake_orders(db.session)
         create_fake_sellers_orders(db.session)
+        create_fake_reviews(db.session)
         print('Database seeded successfully')
         
   
