@@ -15,6 +15,13 @@ def checkout_shipping():
         flash('Your cart is empty. Please add products to your cart before proceeding to checkout.', 'danger')
         return redirect(url_for('cart.cart_view')) 
     
+    # Verifica la disponibilità dei prodotti nel carrello
+    for product_cart in cart.products:
+        product = Product.query.get(product_cart.product_id)
+        if product and product_cart.quantity > product.quantity:
+            flash(f'Not enough stock for product {product.name}. Available: {product.quantity}, Requested: {product_cart.quantity}', 'danger')
+            return redirect(url_for('cart.cart_view'))
+    
     buyer = Buyer.query.filter_by(user_id=current_user.id).first()
     saved_address = buyer.shipping_address if buyer else None
     
@@ -76,6 +83,19 @@ def checkout_payment():
                 quantity=product_cart.quantity
             )
             db.session.add(product_order_quantity)
+            
+            
+            '''
+            Update the product quantity, if the quantity in the order 
+            is greater than the number of available orders, an error is returned
+            '''
+            product = Product.query.get(product_cart.product_id)
+            if product:
+                product.quantity -= product_cart.quantity
+                if product.quantity < 0:
+                    flash(f'Not enough stock for product {product.name}', 'danger')
+                    return redirect(url_for('cart.cart_view'))
+                
             
             seller_id = product_cart.product.user_id
             if seller_id not in seller_orders:

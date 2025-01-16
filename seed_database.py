@@ -152,6 +152,9 @@ def create_fake_products_cart(session):
 
 
 def create_fake_orders(session):
+    #funzione che crea un ordine per ogni carrello, mettendo poi nell'ordine i prodotti che erano 
+    #nel carrello, in seguito elimina il carrello 
+    
     buyers_with_cart = session.query(Buyer).join(Cart).all()
     
     for buyer in buyers_with_cart:
