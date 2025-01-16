@@ -134,8 +134,8 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('buyers.user_id'))
     total = db.Column(db.Float) 
-    shipping_address = db.Column(db.String)
-    payment_method = db.Column(db.Enum('Card', 'Paypal', 'Klarna', name='payment_method'), default='Card')
+    shipping_address = db.Column(db.String, nullable=False)  
+    payment_method = db.Column(db.Enum('Card', 'Paypal', 'Klarna', name='payment_method'), nullable=False, default='Card') 
     created_at = db.Column(sq.TIMESTAMP, nullable=False, server_default=sq.func.now())
 
     buyer = relationship('Buyer', backref='orders')
