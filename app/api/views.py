@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, redirect, url_for, flash
 from .import api
 from app import db, jwt
 from ..models import Product, Cart, ProductsCart, User
@@ -64,36 +64,20 @@ def update_cart():
         return jsonify({'message': 'Cart updated successfully'})
     return jsonify({'error': 'Product not found in cart'}), 404
 
-
-@api.route('/cart', methods=['DELETE'])
-@login_required
-def remove_from_cart():
-    data = request.get_json()
-    product_id = data.get('product_id')
     
-    cart = Cart.query.filter_by(user_id=current_user.id).first()
-    if not cart:
-        return jsonify({'error': 'Cart not found'}), 404
-    
-    product_cart = ProductsCart.query.filter_by(cart_id=cart.id, product_id=product_id).first()
-    if product_cart:
-        db.session.delete(product_cart)
-        db.session.commit()
-        return jsonify({'message': 'Product removed from cart'})
-    return jsonify({'error': 'Product not found in cart'}), 404
-
-
-@api.route('/cart', methods=['POST'])    
+@api.route('/cart', methods=['POST'])
 @login_required
 def add_to_cart():
-   try:
-        product_id = request.json.get('product_id')
+    try:
+        product_id = request.form.get('product_id')
         if not product_id:
-            return jsonify({'error': 'Product ID is required'}), 400
+            flash('Product ID is required', 'danger')
+            return redirect(url_for('products.all_products'))
         
         product = Product.query.get(product_id)
         if not product:
-            return jsonify({'error': 'Product not found'}), 404
+            flash('Product not found', 'danger')
+            return redirect(url_for('products.all_products'))
         
         cart = Cart.query.filter_by(user_id=current_user.id).first()
         if not cart:
@@ -103,15 +87,17 @@ def add_to_cart():
         
         product_cart = ProductsCart.query.filter_by(cart_id=cart.id, product_id=product_id).first()
         if product_cart:
-            return jsonify({'message': 'Product already in cart'}), 200
+            flash('Product already in cart', 'info')
+            return redirect(url_for('products.all_products'))
 
         product_cart = ProductsCart(cart_id=cart.id, product_id=product_id, quantity=1)
         db.session.add(product_cart)
         db.session.commit()
 
-        return jsonify({'message': 'Product added to cart'}), 200
-   except Exception as e:
+        flash('Product added to cart', 'success')
+        return redirect(url_for('products.all_products'))
+    except Exception as e:
         # Log the error for debugging
         print(f"Error: {e}")
-        return jsonify({'error': 'Internal Sserver Error'}), 500
-    
+        flash('Internal Server Error', 'danger')
+        return redirect(url_for('products.all_products'))

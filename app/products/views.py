@@ -11,19 +11,23 @@ from functools import wraps
 def all_products():
     search = request.args.get('search', '', type=str)
     category_id = request.args.get('category', None, type=int)
-    
+    page = request.args.get('page', 1, type=int)
+    per_page = 5
+
     products_query = Product.query.order_by(Product.created_at.desc())
-    
+
     if search:
         products_query = products_query.filter(Product.name.ilike(f'%{search}%'))
-    
+
     if category_id:
         products_query = products_query.filter(Product.category_id == category_id)
-    
-    products = products_query.limit(5).all()
+        
+        
+    pagination = products_query.paginate(page=page, per_page=per_page, error_out=False)
+    products = pagination.items
     categories = Category.query.all()
-    
-    return render_template('products.html', products=products, categories=categories)
+
+    return render_template('products.html', products=products, categories=categories, pagination=pagination, search=search, category_id=category_id)
 
 
 # seba
