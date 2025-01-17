@@ -11,6 +11,9 @@ from functools import wraps
 def all_products():
     search = request.args.get('search', '', type=str)
     category_id = request.args.get('category', None, type=int)
+    selected_brand = request.args.get('brand', '', type=str)
+    min_price = request.args.get('min_price', None, type=float)
+    max_price = request.args.get('max_price', None, type=float)
     page = request.args.get('page', 1, type=int)
     per_page = 5
 
@@ -21,14 +24,23 @@ def all_products():
 
     if category_id:
         products_query = products_query.filter(Product.category_id == category_id)
-        
+    
+    if selected_brand:
+        products_query = products_query.filter(Product.brand.ilike(f'%{selected_brand}%'))
+    
+    if min_price is not None:
+        products_query = products_query.filter(Product.price >= min_price)
+    
+    if max_price is not None:
+        products_query = products_query.filter(Product.price <= max_price)
         
     pagination = products_query.paginate(page=page, per_page=per_page, error_out=False)
     products = pagination.items
     categories = Category.query.all()
+    brands = db.session.query(Product.brand).distinct().all()
+    brands = [brand[0] for brand in brands]
 
-    return render_template('products.html', products=products, categories=categories, pagination=pagination, search=search, category_id=category_id)
-
+    return render_template('products.html', products=products, categories=categories, brands=brands, pagination=pagination, search=search, category_id=category_id, selected_brand=selected_brand, min_price=min_price, max_price=max_price)
 
 # seba
 
