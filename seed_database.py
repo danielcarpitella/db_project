@@ -16,6 +16,7 @@ def delete_all_data(session):
     session.query(ProductsCart).delete()
     session.query(ProductOrderQuantity).delete()
     session.query(Review).delete()
+    session.query(SellerOrder).delete()  
     session.query(Order).delete()
     session.query(Cart).delete()
     session.query(Product).delete()
