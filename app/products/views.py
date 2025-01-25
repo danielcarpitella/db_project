@@ -12,6 +12,7 @@ def all_products():
     search = request.args.get('search', '', type=str)
     category_id = request.args.get('category', None, type=int)
     selected_brand = request.args.get('brand', '', type=str)
+    selected_store = request.args.get('store', '', type=str)
     min_price = request.args.get('min_price', None, type=float)
     max_price = request.args.get('max_price', None, type=float)
     page = request.args.get('page', 1, type=int)
@@ -27,6 +28,9 @@ def all_products():
     
     if selected_brand:
         products_query = products_query.filter(Product.brand.ilike(f'%{selected_brand}%'))
+
+    if selected_store:
+        products_query = products_query.join(Seller, Product.user_id == Seller.user_id).filter(Seller.store_name.ilike(f'%{selected_store}%'))
     
     if min_price is not None:
         products_query = products_query.filter(Product.price >= min_price)
@@ -39,8 +43,10 @@ def all_products():
     categories = Category.query.all()
     brands = db.session.query(Product.brand).distinct().all()
     brands = [brand[0] for brand in brands]
+    stores = db.session.query(Seller.store_name).all()
+    stores = [store[0] for store in stores]
 
-    return render_template('products.html', products=products, categories=categories, brands=brands, pagination=pagination, search=search, category_id=category_id, selected_brand=selected_brand, min_price=min_price, max_price=max_price)
+    return render_template('products.html', products=products, categories=categories, brands=brands, stores=stores, pagination=pagination, search=search, category_id=category_id, selected_brand=selected_brand, selected_store=selected_store, min_price=min_price, max_price=max_price)
 
 # seba
 
@@ -99,8 +105,9 @@ def seller_required(f):
 @products.route('/seller/products')
 @seller_required
 def seller_products():
+    store_name = Seller.query.filter_by(user_id=current_user.id).first().store_name
     products = Product.query.filter_by(user_id=current_user.id).order_by(Product.created_at.desc()).all()
-    return render_template('seller_products.html', products=products)
+    return render_template('seller_products.html', products=products, store_name=store_name)
 
 
 @products.route('/seller/products/edit-product/<int:product_id>', methods=['GET', 'POST'])

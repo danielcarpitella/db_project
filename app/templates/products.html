@@ -26,6 +26,14 @@
                 </select>
             </div>
             <div class="col-md-2">
+                <select name="store" class="form-control">
+                    <option value="">All Stores</option>
+                    {% for store in stores %}
+                    <option value="{{ store }}" {% if store == selected_store %}selected{% endif %}>{{ store }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
                 <input type="number" name="min_price" class="form-control" placeholder="Min Price" value="{{ min_price if min_price is not none else '' }}">
             </div>
             <div class="col-md-2">
