@@ -73,6 +73,7 @@ def buyer_registration():
     return render_template('auth/register_user-type_buyer.html')
 
 
+# TODO: NON POSSO CREARE UNO STORE CON UN NOME CHE ESISTE GIA
 @auth.route('/register/user-type/seller', methods=['GET', 'POST'])
 def seller_registration():
     if request.method == 'POST':
@@ -82,6 +83,11 @@ def seller_registration():
             return redirect(url_for('auth.register'))
         
         store_name = request.form.get('store_name')
+        existing_stores = db.session.query(Seller.store_name).all()
+        existing_stores = [store[0] for store in existing_stores]
+        if store_name in existing_stores:
+            flash('Store name already exists. Please choose another.')
+            return redirect(url_for('auth.register'))
         
         user = User(
             first_name=registration_data['first_name'],
@@ -107,6 +113,7 @@ def seller_registration():
     return render_template('auth/register_user-type_seller.html')
    
    
+# TODO: NON POSSO CREARE UNO STORE CON UN NOME CHE ESISTE GIA
 @auth.route('/add-user-type/seller', methods=['GET', 'POST'])
 @login_required
 def add_user_type_seller():
@@ -115,10 +122,15 @@ def add_user_type_seller():
 
     if is_seller:
         flash('You are already a seller.')
-        return redirect(url_for('main.user', username=current_user.username))
+        return redirect(url_for('main.user', username=current_user.id))
 
     if request.method == 'POST':
         store_name = request.form.get('store_name')
+        existing_stores = db.session.query(Seller.store_name).all()
+        existing_stores = [store[0] for store in existing_stores]
+        if store_name in existing_stores:
+            flash('Store name already exists. Please choose another.')
+            return redirect(url_for('main.user', username=current_user.id))
         
         seller = Seller(
             user_id=current_user.id,

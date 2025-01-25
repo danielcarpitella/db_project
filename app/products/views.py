@@ -48,7 +48,6 @@ def all_products():
 
     return render_template('products.html', products=products, categories=categories, brands=brands, stores=stores, pagination=pagination, search=search, category_id=category_id, selected_brand=selected_brand, selected_store=selected_store, min_price=min_price, max_price=max_price)
 
-# seba
 
 @products.route('/product/<int:product_id>')
 def single_product(product_id):
@@ -87,8 +86,6 @@ def single_product(product_id):
     ).order_by(Review.created_at.desc()).all()
     return render_template('single_product.html', product=product, average_rate=average_rate, reviews=reviews, user_review=user_review)
 
-
-# seba ha fatto da qua in giù per quanto riguarda seller-products
 
 
 def seller_required(f):
