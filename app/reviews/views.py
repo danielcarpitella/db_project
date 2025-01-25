@@ -12,18 +12,19 @@ from functools import wraps
 def product_review(product_id):
     # se l'utente non ha acquistato il prodotto non può scrivere la recensione, bisognerebbe dare un messaggio di errore
     # sulla tabella sellers_orders deve essere che order_status=delivered, se non lo è allora redirecta
-    # if not (
-    #     SellerOrder.query
-    #     .join(Order, SellerOrder.buyer_order_id == Order.id)
-    #     .join(ProductOrderQuantity, ProductOrderQuantity.order_id == Order.id)
-    #     .filter(
-    #         ProductOrderQuantity.product_id == product_id,
-    #         Order.user_id == current_user.id,
-    #         SellerOrder.order_status == 'Delivered'
-    #     )
-    #     .first()
-    # ):
-    #     return redirect(url_for('products.single_product', product_id=product_id))
+    if not (
+        SellerOrder.query
+        .join(Order, SellerOrder.buyer_order_id == Order.id)
+        .join(ProductOrderQuantity, ProductOrderQuantity.order_id == Order.id)
+        .filter(
+            ProductOrderQuantity.product_id == product_id,
+            Order.user_id == current_user.id,
+            # SellerOrder.order_status == 'Delivered'  # se commentato: sufficiente che sia stato acquistato; se non commentato: deve essere consegnato
+        )
+        .first()
+    ):
+        flash("Non puoi lasciare una recensione di un prodotto che non hai acquistato", "danger")
+        return redirect(url_for('products.single_product', product_id=product_id))
 
     user_review = Review.query.filter_by(product_id=product_id, user_id=current_user.id).first()
     form = ReviewForm(obj=user_review)

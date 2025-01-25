@@ -29,7 +29,7 @@
                 <td>{{ product.category.title }}</td>
                 <td>
                     <a href="{{ url_for('products.seller_edit_product', product_id=product.id) }}" class="btn btn-warning btn-sm">Modifica</a>
-                    <form method="POST" action="{{ url_for('products.seller_delete_product', product_id=product.id) }}" style="display:inline;">
+                    <form method="POST" action="{{ url_for('products.seller_delete_product', product_id=product.id) }}" style="display:inline;" onsubmit="confirmDeletion(event, this)">
                         <button type="submit" class="btn btn-danger btn-sm">Elimina</button>
                     </form>
                 </td>
@@ -38,4 +38,13 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    function confirmDeletion(event, form) {
+        event.preventDefault();
+        if (confirm("Sicuro di voler cancellare questo prodotto?")) {
+            form.submit();
+        }
+    }
+</script>
 {% endblock %}

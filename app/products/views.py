@@ -84,6 +84,7 @@ def seller_edit_product(product_id):
         product.brand=form.brand.data
         product.price=form.price.data
         product.quantity=form.quantity.data
+        product.category_id=form.category_id.data
 
         db.session.commit()
 
@@ -111,7 +112,7 @@ def seller_add_product():
     if form.validate_on_submit():
         product = Product (
             user_id=current_user.id,
-            category_id=1,  # SIA QUA SIA SU EDIT DEVO METTERE IL MENU A TENDINA CON IL TESTO E L'IF PER L'ID
+            category_id=form.category_id.data,  # SIA QUA SIA SU EDIT DEVO METTERE IL MENU A TENDINA CON IL TESTO E L'IF PER L'ID
             name=form.name.data,
             description=form.description.data,
             brand=form.brand.data,

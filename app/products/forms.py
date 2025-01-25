@@ -1,18 +1,17 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DecimalField, IntegerField, SubmitField, SelectField, TextAreaField
-from wtforms.validators import DataRequired, Email, EqualTo, NumberRange
-from wtforms import ValidationError
-from app import db
-
-from ..models import User  
-
+from wtforms import StringField, TextAreaField, DecimalField, IntegerField, SelectField, SubmitField
+from wtforms.validators import DataRequired
+from app.models import Category
 
 class EditProductForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
-    description = TextAreaField('Description', validators=[DataRequired()])
-    brand = StringField('Brand', validators=[DataRequired()])
-    price = DecimalField('Price', validators=[DataRequired()])
-    quantity = IntegerField('Quantity', validators=[DataRequired()])
-    submit = SubmitField('Update')
+    name = StringField('Nome', validators=[DataRequired()])
+    description = TextAreaField('Descrizione', validators=[DataRequired()])
+    category_id = SelectField('Categoria', coerce=int, validators=[DataRequired()])
+    brand = StringField('Marca', validators=[DataRequired()])
+    price = DecimalField('Prezzo', validators=[DataRequired()])
+    quantity = IntegerField('Quantità', validators=[DataRequired()])
+    submit = SubmitField('Salva')
 
-
+    def __init__(self, *args, **kwargs):
+        super(EditProductForm, self).__init__(*args, **kwargs)
+        self.category_id.choices = [(category.id, category.title) for category in Category.query.all()]
