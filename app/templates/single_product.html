@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}{{ product.name }}{% endblock %}
 
@@ -22,6 +23,7 @@
             <p><strong>Brand:</strong> {{ product.brand }}</p>
             <p><strong>Price:</strong> ${{ product.price }}</p>
             <p><strong>Quantity:</strong> {{ product.quantity }}</p>
+            <p><strong>Average rate:</strong> {{ average_rate }}</p>
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     <div class="alert alert-dismissible fade show" role="alert">
@@ -41,17 +43,47 @@
     <div class="row mt-5">
         <div class="col-md-12">
             <h2>Reviews</h2>
-            <a href="{{ url_for('reviews.product_review', product_id=product.id) }}" class="btn btn-warning btn-sm">Modifica</a>
-            {% for review in reviews %}
+            <a href="{{ url_for('reviews.product_review', product_id=product.id) }}" class="btn btn-warning btn-sm">Scrivi o modifica la tua recensione</a>
+            
+            {% if user_review %}
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">{{ review.title }}</h5>
+                    <h5 class="card-title"><strong>{{ user_review.Review.title }}</strong></h5>
+                    <p class="card-text">{{ user_review.Review.description }}</p>
+                    <p class="card-text"><strong>Rating:</strong> {{ user_review.Review.rate }}/5</p>
+                    <p class="card-text"><strong>My review</strong> ({{ user_review.User.first_name }} {{ user_review.User.last_name }})</p>
+                    <p class="card-text"><small class="text-muted">Reviewed on {{ user_review.Review.created_at }}</small></p>
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="GET" action="#">
+                <div class="form-group">
+                    <label for="star_rating">Star Rating</label>
+                    <select id="star_rating" name="star_rating" class="form-control">
+                        <option value="all" {% if star_rating == 'all' %}selected{% endif %}>All</option>
+                        <option value="1" {% if star_rating == '1' %}selected{% endif %}>1 Star</option>
+                        <option value="2" {% if star_rating == '2' %}selected{% endif %}>2 Stars</option>
+                        <option value="3" {% if star_rating == '3' %}selected{% endif %}>3 Stars</option>
+                        <option value="4" {% if star_rating == '4' %}selected{% endif %}>4 Stars</option>
+                        <option value="5" {% if star_rating == '5' %}selected{% endif %}>5 Stars</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+            
+            {% for review, user in reviews %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title"><strong>{{ review.title }}</strong></h5>
                     <p class="card-text">{{ review.description }}</p>
                     <p class="card-text"><strong>Rating:</strong> {{ review.rate }}/5</p>
+                    <p class="card-text"><strong>Reviewed by:</strong> {{ user.first_name }} {{ user.last_name }}</p>
                     <p class="card-text"><small class="text-muted">Reviewed on {{ review.created_at }}</small></p>
                 </div>
             </div>
             {% endfor %}
+
         </div>
     </div>
 </div>

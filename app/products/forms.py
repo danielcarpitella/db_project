@@ -15,3 +15,15 @@ class EditProductForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super(EditProductForm, self).__init__(*args, **kwargs)
         self.category_id.choices = [(category.id, category.title) for category in Category.query.all()]
+
+
+class ReviewFilterForm(FlaskForm):
+    star_rating = SelectField('Filter reviews', choices=[
+        ('all', 'All'),
+        ('1', '1 Star'),
+        ('2', '2 Stars'),
+        ('3', '3 Stars'),
+        ('4', '4 Stars'),
+        ('5', '5 Stars')
+    ], default='all')
+    submit = SubmitField('Filter')

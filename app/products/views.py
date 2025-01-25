@@ -1,9 +1,9 @@
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app.products import products
-from ..models import Product, Category, Review, Seller
+from ..models import Product, Category, Review, Seller, User
 from app import db
-from .forms import EditProductForm
+from .forms import EditProductForm, ReviewFilterForm
 from functools import wraps
 
 
@@ -46,9 +46,40 @@ def all_products():
 
 @products.route('/product/<int:product_id>')
 def single_product(product_id):
+
+    # dati sul prodotto
     product = Product.query.get_or_404(product_id)
-    reviews = Review.query.filter_by(product_id=product_id).order_by(Review.created_at.desc()).all()
-    return render_template('single_product.html', product=product, reviews=reviews)
+
+    # media stelle
+    average_rate = db.session.query(db.func.avg(Review.rate)).filter(Review.product_id == product_id).scalar()
+    average_rate = round(average_rate, 1) if average_rate is not None else 0.0
+
+    # dati sulla recensione dell'utente corrente
+    user_review = db.session.query(Review, User).join(User, Review.user_id == User.id).filter(
+        Review.product_id == product_id,
+        User.id == current_user.id
+    ).first()
+
+    # todo: pensare: senza wtf (cioè com'è adesso) se ricarico la pagina non mi dice niente di male
+    # ma se torno indietro mi torna indietro passo per passo ogni filtro che ho applicato
+    # con wtf se ricarico la pagina mi dice che ci sono informazioni che verranno reinviate
+    # ma se torno indietro va alla pagina precedente senza scorrere tra i filtri applicati
+
+    # dati sulle recensioni (escludendo l'utente corrente) con filtri
+    star_rating = request.args.get('star_rating', 'all')
+    if star_rating != 'all':
+        reviews = db.session.query(Review, User).join(User, Review.user_id == User.id).filter(
+            Review.product_id == product_id,
+            Review.rate == star_rating,
+            User.id != current_user.id
+        ).order_by(Review.created_at.desc()).all()
+        return render_template('single_product.html', product=product, average_rate=average_rate, reviews=reviews, user_review=user_review, star_rating=star_rating)
+
+    reviews = db.session.query(Review, User).join(User, Review.user_id == User.id).filter(
+        Review.product_id == product_id,
+        User.id != current_user.id
+    ).order_by(Review.created_at.desc()).all()
+    return render_template('single_product.html', product=product, average_rate=average_rate, reviews=reviews, user_review=user_review)
 
 
 # seba ha fatto da qua in giù per quanto riguarda seller-products
