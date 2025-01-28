@@ -32,7 +32,7 @@
                             <div class="d-flex">
                                 <button type="submit" class="btn btn-primary">Update</button>
                             </form>
-                            <form method="post" action="{{ url_for('cart.remove_from_cart') }}">
+                            <form method="post" action="{{ url_for('cart.remove_from_cart') }}" onsubmit="confirmDeletion(event, this)">
                                 <input type="hidden" name="product_id" value="{{ item.product.id }}">
                                 <button type="submit" class="btn btn-danger">Remove</button>
                             </form>
@@ -50,4 +50,13 @@
         <p>Your cart is empty. <a href="{{ url_for('products.all_products') }}">Start shopping</a></p>
     {% endif %}
 </div>
+
+<script>
+    function confirmDeletion(event, form) {
+        event.preventDefault();
+        if (confirm("Are you sure you want to remove it?")) {
+            form.submit();
+        }
+    }
+</script>
 {% endblock %}

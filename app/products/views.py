@@ -16,7 +16,7 @@ def all_products():
     min_price = request.args.get('min_price', None, type=float)
     max_price = request.args.get('max_price', None, type=float)
     page = request.args.get('page', 1, type=int)
-    per_page = 5
+    per_page = 6
 
     products_query = Product.query.order_by(Product.created_at.desc())
 
@@ -60,10 +60,12 @@ def single_product(product_id):
     average_rate = round(average_rate, 1) if average_rate is not None else 0.0
 
     # dati sulla recensione dell'utente corrente
-    user_review = db.session.query(Review, User).join(User, Review.user_id == User.id).filter(
-        Review.product_id == product_id,
-        User.id == current_user.id
-    ).first()
+    user_review = None
+    if current_user.is_authenticated:
+        user_review = db.session.query(Review, User).join(User, Review.user_id == User.id).filter(
+            Review.product_id == product_id,
+            User.id == current_user.id
+        ).first()
 
     # todo: pensare: senza wtf (cioè com'è adesso) se ricarico la pagina non mi dice niente di male
     # ma se torno indietro mi torna indietro passo per passo ogni filtro che ho applicato
@@ -72,18 +74,17 @@ def single_product(product_id):
 
     # dati sulle recensioni (escludendo l'utente corrente) con filtri
     star_rating = request.args.get('star_rating', 'all')
+    reviews_query = db.session.query(Review, User).join(User, Review.user_id == User.id).filter(
+        Review.product_id == product_id
+    )
+    
     if star_rating != 'all':
-        reviews = db.session.query(Review, User).join(User, Review.user_id == User.id).filter(
-            Review.product_id == product_id,
-            Review.rate == star_rating,
-            User.id != current_user.id
-        ).order_by(Review.created_at.desc()).all()
-        return render_template('single_product.html', product=product, average_rate=average_rate, reviews=reviews, user_review=user_review, star_rating=star_rating)
-
-    reviews = db.session.query(Review, User).join(User, Review.user_id == User.id).filter(
-        Review.product_id == product_id,
-        User.id != current_user.id
-    ).order_by(Review.created_at.desc()).all()
+        reviews_query = reviews_query.filter(Review.rate == star_rating)
+    
+    if current_user.is_authenticated:
+        reviews_query = reviews_query.filter(User.id != current_user.id)
+    
+    reviews = reviews_query.order_by(Review.created_at.desc()).all()
     return render_template('single_product.html', product=product, average_rate=average_rate, reviews=reviews, user_review=user_review)
 
 

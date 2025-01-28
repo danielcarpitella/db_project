@@ -4,7 +4,7 @@
 <div class="container mt-5">
     <h1 class="mb-4">Products</h1>
     
-    <form method="get" action="{{ url_for('products.all_products') }}">
+    <form method="get" action="{{ url_for('products.all_products') }}" class="mt-5">
         <div class="row mb-4">
             <div class="col-md-2">
                 <input type="text" name="search" class="form-control" placeholder="Search by name" value="{{ search }}">
@@ -39,17 +39,18 @@
             <div class="col-md-2">
                 <input type="number" name="max_price" class="form-control" placeholder="Max Price" value="{{ max_price if max_price is not none else '' }}">
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 mt-5">
                 <button type="submit" class="btn btn-primary btn-block">Filter</button>
             </div>
         </div>
     </form>
-    <div class="row" id="products-list">
+    
+    <div class="row mt-5" id="products-list">
         {% for product in products %}
         <div class="col-md-4 mb-4">
-            <div class="card">
+            <div class="card card-fixed-height">
                 <div class="card-body">
-                    <h5 class="card-title"><a href="{{ url_for('products.single_product', product_id=product.id) }}">{{ product.name }}</a></h5>
+                    <h4 class="card-title"><a href="{{ url_for('products.single_product', product_id=product.id) }}">{{ product.name }}</a></h5>
                     <p class="card-text">{{ product.description }}</p>
                     <p class="card-text"><strong>Price:</strong> ${{ product.price }}</p>
                     <p class="card-text"><small class="text-muted">Published on {{ product.created_at }}</small></p>
