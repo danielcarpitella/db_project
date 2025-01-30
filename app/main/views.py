@@ -4,6 +4,7 @@ from app.models import Product, Category, Review, Cart, ProductsCart, Seller, Or
 from flask_login import current_user, login_required
 from app import db
 from .forms import EditProfileForm, EditSellerProfileForm
+from app.decorators import seller_required, buyer_required
 
 
 @main.route('/')
@@ -12,7 +13,7 @@ def index():
 
 
 @main.route('/user/<username>')
-@login_required
+@buyer_required
 def user(username):
     user = User.query.filter_by(id=username).first_or_404()
     is_buyer = Buyer.query.filter_by(user_id=user.id).first() is not None
@@ -22,7 +23,7 @@ def user(username):
 
 
 @main.route('/seller/user/<int:user_id>')
-@login_required
+@seller_required
 def user_seller(user_id):
     user = User.query.get_or_404(user_id)
     is_buyer = Buyer.query.filter_by(user_id=user.id).first() is not None
@@ -57,7 +58,7 @@ def edit_profile():
 
 
 @main.route('/seller/edit-profile', methods=['GET', 'POST'])
-@login_required
+@seller_required
 def seller_edit_profile():
     seller = Seller.query.filter_by(user_id=current_user.id).first()
     if not seller:

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}Scrivi la recensione{% endblock %}
+{% block title %}Your review{% endblock %}
 
-{% block content %}
+{% block page_content %}
 <div class="container">
-    <h1 class="mt-4">Scrivi o modifica la tua recensione</h1>
+    <h1 class="mt-4">Write or edit your review</h1>
     <div class="col-md-4">
         {{ wtf.quick_form(form) }}
     </div>

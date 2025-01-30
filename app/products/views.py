@@ -5,6 +5,7 @@ from ..models import Product, Category, Review, Seller, User
 from app import db
 from .forms import EditProductForm, ReviewFilterForm
 from functools import wraps
+from app.decorators import seller_required
 
 
 @products.route('/products')
@@ -85,18 +86,7 @@ def single_product(product_id):
         reviews_query = reviews_query.filter(User.id != current_user.id)
     
     reviews = reviews_query.order_by(Review.created_at.desc()).all()
-    return render_template('single_product.html', product=product, average_rate=average_rate, reviews=reviews, user_review=user_review)
-
-
-
-def seller_required(f):
-    @wraps(f)
-    @login_required
-    def decorated_function(*args, **kwargs):
-        if not Seller.query.filter_by(user_id=current_user.id).first(): # se l'utente non è un seller torna alla home
-            return redirect(url_for('main.index'))
-        return f(*args, **kwargs)
-    return decorated_function
+    return render_template('single_product.html', product=product, average_rate=average_rate, reviews=reviews, user_review=user_review, star_rating=star_rating)
 
 
 

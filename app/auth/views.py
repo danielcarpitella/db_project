@@ -73,7 +73,6 @@ def buyer_registration():
     return render_template('auth/register_user-type_buyer.html')
 
 
-# TODO: NON POSSO CREARE UNO STORE CON UN NOME CHE ESISTE GIA
 @auth.route('/register/user-type/seller', methods=['GET', 'POST'])
 def seller_registration():
     if request.method == 'POST':
@@ -112,8 +111,7 @@ def seller_registration():
     
     return render_template('auth/register_user-type_seller.html')
    
-   
-# TODO: NON POSSO CREARE UNO STORE CON UN NOME CHE ESISTE GIA
+
 @auth.route('/add-user-type/seller', methods=['GET', 'POST'])
 @login_required
 def add_user_type_seller():
@@ -197,6 +195,7 @@ def login():
 
 
 @auth.route('/login/choose-user-type', methods=['GET', 'POST'])
+@login_required
 def choose_user_type():
     user_id = session.get('user_id')
     if not user_id:

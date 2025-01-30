@@ -4,10 +4,11 @@ from app.orders import orders
 from app.models import Order, Product, Cart, ProductsCart, SellerOrder, ProductOrderQuantity, Buyer, User
 from app import db
 from .forms import ShippingForm
+from app.decorators import buyer_required, seller_required
 
 
 @orders.route('/checkout/shipping', methods=['GET', 'POST'])
-@login_required
+@buyer_required
 def checkout_shipping():
     
     cart = Cart.query.filter_by(user_id=current_user.id).first()
@@ -33,7 +34,7 @@ def checkout_shipping():
  
  
 @orders.route('/checkout/shipping/address', methods=['GET', 'POST'])
-@login_required
+@buyer_required
 def checkout_shipping_address():
     form = ShippingForm()
     
@@ -45,7 +46,7 @@ def checkout_shipping_address():
 
        
 @orders.route('/checkout/payment', methods=['GET', 'POST'])
-@login_required
+@buyer_required
 def checkout_payment():
     shipping_address = request.args.get('shipping_address')
     if not shipping_address:
@@ -119,7 +120,7 @@ def checkout_payment():
         
         
 @orders.route('/checkout/confirmation', methods=['GET'])
-@login_required
+@buyer_required
 def checkout_confirmation():
     order_id = request.args.get('order_id')
     if not order_id:
@@ -137,7 +138,7 @@ def checkout_confirmation():
 
 
 @orders.route('/orders')
-@login_required
+@buyer_required
 def buyer_orders():
     orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).all()
     seller_orders = SellerOrder.query.filter(SellerOrder.buyer_order_id.in_([order.id for order in orders])).all()
@@ -153,7 +154,7 @@ def buyer_orders():
 
 
 @orders.route('/orders/<int:store_order_id>')
-@login_required
+@buyer_required
 def store_order_detail(store_order_id):
     
     store_order = SellerOrder.query.get_or_404(store_order_id)
@@ -170,7 +171,7 @@ def store_order_detail(store_order_id):
 
 
 @orders.route('/seller/orders')
-@login_required
+@seller_required
 def seller_orders():
     if not current_user.seller:
         abort(403)
@@ -192,7 +193,7 @@ def seller_orders():
 
 
 @orders.route('/seller/orders/<int:order_id>', methods=['GET', 'POST'])
-@login_required
+@seller_required
 def seller_order_detail(order_id):
     seller_order = SellerOrder.query.get_or_404(order_id)
     

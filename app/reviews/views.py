@@ -5,10 +5,11 @@ from ..models import Product, Category, Review, ProductOrderQuantity, Order, Sel
 from .forms import ReviewForm
 from app import db
 from functools import wraps
+from app.decorators import buyer_required
 
 
 @reviews.route('/product/<int:product_id>/review', methods=['GET', 'POST'])
-@login_required
+@buyer_required
 def product_review(product_id):
     # se l'utente non ha acquistato il prodotto non può scrivere la recensione, bisognerebbe dare un messaggio di errore
     # sulla tabella sellers_orders deve essere che order_status=delivered, se non lo è allora redirecta

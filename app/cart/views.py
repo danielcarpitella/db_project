@@ -3,10 +3,11 @@ from flask_login import login_required, current_user
 from app.cart import cart
 from app.models import Cart, ProductsCart, Product
 from app import db
+from app.decorators import buyer_required
 
 
 @cart.route('/cart')
-@login_required
+@buyer_required
 def cart_view():
     cart = Cart.query.filter_by(user_id=current_user.id).first()
     if not cart or not cart.products:
@@ -25,7 +26,7 @@ def cart_view():
 
 #usato nella single product page
 @cart.route('/cart/add', methods=['POST'])
-@login_required
+@buyer_required
 def add_to_cart():
     try:
         product_id = request.form.get('product_id')
@@ -63,7 +64,7 @@ def add_to_cart():
     
     
 @cart.route('/cart/update', methods=['POST'])
-@login_required
+@buyer_required
 def update_cart():
     product_id = request.form.get('product_id')
     quantity = request.form.get('quantity')
@@ -89,7 +90,7 @@ def update_cart():
 
 
 @cart.route('/cart/remove', methods=['POST'])
-@login_required
+@buyer_required
 def remove_from_cart():
     product_id = request.form.get('product_id')
     
