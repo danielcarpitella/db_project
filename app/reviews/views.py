@@ -24,7 +24,7 @@ def product_review(product_id):
         )
         .first()
     ):
-        flash("Non puoi lasciare una recensione di un prodotto che non hai acquistato", "danger")
+        flash("You cannot leave a review for a product you have not purchased", "danger")
         return redirect(url_for('products.single_product', product_id=product_id))
 
     user_review = Review.query.filter_by(product_id=product_id, user_id=current_user.id).first()
@@ -45,6 +45,7 @@ def product_review(product_id):
             user_review.title = form.title.data
             user_review.description = form.description.data
         db.session.commit()
+        flash('You successfully updated your review', 'success')
         return redirect(url_for('products.single_product', product_id=product_id))
 
     return render_template('your_review.html', form=form)

@@ -10,7 +10,7 @@
     {% if not is_buyer %}
         <a href="{{ url_for('auth.add_user_type_buyer') }}" class="btn btn-primary mt-3">Start Shopping</a>
     {% else %}
-        <a href="{{ url_for('main.user', username=user.id) }}" class="btn btn-primary mt-3" onclick="confirmSwitch(event)">Switch to buyer mode</a>
+        <a href="{{ url_for('main.switch_to_buyer', user_id=user.id) }}" class="btn btn-primary mt-3" onclick="confirmSwitch(event)">Switch to buyer mode</a>
     {% endif %}
 </div>
 

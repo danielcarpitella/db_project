@@ -80,6 +80,16 @@ def seller_edit_profile():
     return render_template('seller_edit_profile.html', form=form)
 
 
+@main.route('/switch-to-seller/<int:user_id>')
+@login_required
+def switch_to_seller(user_id):
+    flash('You have switched to seller mode.', 'success')
+    return redirect(url_for('main.user_seller', user_id=user_id))
 
+@main.route('/switch-to-buyer/<int:user_id>')
+@login_required
+def switch_to_buyer(user_id):
+    flash('You have switched to buyer mode.', 'success')
+    return redirect(url_for('main.user', username=user_id))
 
 

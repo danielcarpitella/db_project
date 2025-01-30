@@ -20,7 +20,11 @@
             <tbody>
                 {% for item in products %}
                     <tr>
-                        <td>{{ item.product.name }}</td>
+                        <td>
+                            <a href="{{ url_for('products.single_product', product_id=item.product.id) }}">
+                                {{ item.product.name }}
+                            </a>
+                        </td>
                         <td>
                             <form method="post" action="{{ url_for('cart.update_cart') }}">
                                 <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control">
