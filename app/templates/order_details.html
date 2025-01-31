@@ -21,7 +21,7 @@
                         {{ item.product.name }}
                     </a>
                     <span>Quantity: {{ item.quantity }}</span>
-                    <span>Price: {{ item.product.price }}€</span>
+                    <span>Price: {{ "{:.2f}".format(item.product.price) }}€</span>
                 </li>
                 {% endfor %}
             </ul>

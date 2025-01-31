@@ -58,7 +58,7 @@ def single_product(product_id):
 
     # media stelle
     average_rate = db.session.query(db.func.avg(Review.rate)).filter(Review.product_id == product_id).scalar()
-    average_rate = round(average_rate, 1) if average_rate is not None else 0.0
+    average_rate = round(average_rate, 1) if average_rate is not None else "Product not yet reviewed"
 
     # dati sulla recensione dell'utente corrente
     user_review = None

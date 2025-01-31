@@ -30,8 +30,8 @@
                                 <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control">
                                 <input type="hidden" name="product_id" value="{{ item.product.id }}">
                         </td>
-                        <td>{{ item.product.price }}</td>
-                        <td>{{ item.product.price * item.quantity }}</td>
+                        <td>{{ "{:.2f}".format(item.product.price) }}</td>
+                        <td>{{ "{:.2f}".format(item.product.price * item.quantity) }}</td>
                         <td>
                             <div class="d-flex">
                                 <button type="submit" class="btn btn-primary">Update</button>
