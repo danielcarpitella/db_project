@@ -1,11 +1,11 @@
-{% extends "bootstrap/base.html" %}
+{% extends "base_seller.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}Aggiungi Prodotto{% endblock %}
+{% block title %}Add Product{% endblock %}
 
-{% block content %}
+{% block page_content %}
 <div class="container">
-    <h1 class="mt-4">Aggiungi Prodotto</h1>
+    <h1 class="mt-4">Add Product</h1>
     <div class="col-md-4">
         {{ wtf.quick_form(form) }}
     </div>

@@ -1,24 +1,24 @@
 {% extends "base_seller.html" %}
 
-{% block title %}I Miei Prodotti{% endblock %}
+{% block title %}My Products{% endblock %}
 
 {% block page_content %}
 <div class="container">
     <h2 class="mt-4">Store name: {{ store_name }}</h2>
 
-    <h1 class="mt-4">I Miei Prodotti</h1>
+    <h1 class="mt-4">My Products</h1>
 
-    <a href="{{ url_for('products.seller_add_product') }}" class="btn btn-primary">Aggiungi Prodotto</a>
+    <a href="{{ url_for('products.seller_add_product') }}" class="btn btn-primary">Add product</a>
     
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Nome</th>
-                <th>Marca</th>
-                <th>Prezzo</th>
-                <th>Quantità</th>
-                <th>Categoria</th>
-                <th>Azioni</th>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Category</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -30,9 +30,9 @@
                 <td>{{ product.quantity }}</td>
                 <td>{{ product.category.title }}</td>
                 <td>
-                    <a href="{{ url_for('products.seller_edit_product', product_id=product.id) }}" class="btn btn-warning btn-sm">Modifica</a>
+                    <a href="{{ url_for('products.seller_edit_product', product_id=product.id) }}" class="btn btn-warning btn-sm">Edit</a>
                     <form method="POST" action="{{ url_for('products.seller_delete_product', product_id=product.id) }}" style="display:inline;" onsubmit="confirmDeletion(event, this)">
-                        <button type="submit" class="btn btn-danger btn-sm">Elimina</button>
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </td>
             </tr>
