@@ -114,6 +114,7 @@ def seller_edit_product(product_id):
 
         db.session.commit()
 
+        flash('You successfully edited product info', 'success')
         return redirect(url_for('products.seller_products'))
 
     return render_template('edit_product.html', product=product, form=form)
@@ -127,6 +128,7 @@ def seller_delete_product(product_id):
     db.session.delete(product)
     db.session.commit()
 
+    flash('You successfully deleted the product', 'success')
     return redirect(url_for('products.seller_products'))
 
 
@@ -148,6 +150,7 @@ def seller_add_product():
         db.session.add(product)
         db.session.commit()
 
+        flash('You successfully added a product', 'success')
         return redirect(url_for('products.seller_products'))
 
     return render_template('add_product.html', form=form)
