@@ -137,3 +137,17 @@
 .card-body .mt-auto {
     margin-top: auto;
 }
+/* Stile per il numero dell'ordine */
+.order-number {
+    font-size: 1.5rem; /* Aumenta la dimensione del testo */
+    font-weight: bold;
+    color: #1a1a1a; /* Colore coerente con il pulsante "Update Status" */
+}
+
+/* Stile per la linea di divisione */
+.divider {
+    border: 0;
+    height: 2px; /* Aumenta l'altezza della linea */
+    background: #1a1a1a; /* Colore coerente con il pulsante "Update Status" */
+    margin: 1rem 0;
+}

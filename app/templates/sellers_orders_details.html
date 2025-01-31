@@ -3,18 +3,21 @@
 {% block title %}Order Details{% endblock %}
 {% block page_content %}
 <div class="container mt-5">
-    <h2>Order Details</h2>
+    <h2 class="mb-4">Order Details</h2>
     <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Order #{{ seller_order.order_id }}</h5>
-        </div>
         <div class="card-body">
-            <p><strong>Status:</strong> {{ seller_order.order_status }}</p>
+            <h5 class="card-title order-number">Order #{{ seller_order.order_id }}</h5>
+            <hr class="divider">
+            <p><strong>Status:</strong> <span class="badge badge-info">{{ seller_order.order_status }}</span></p>
             <p><strong>Placed on:</strong> {{ buyer_order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
             <h5 class="mt-4">Products Ordered:</h5>
-            <ul>
+            <ul class="list-group mb-4">
                 {% for item in products_ordered %}
-                <li>{{ item.product.name }} - Quantity: {{ item.quantity }} - Price: {{ item.product.price }}€</li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>{{ item.product.name }}</span>
+                    <span>Quantity: {{ item.quantity }}</span>
+                    <span>Price: {{ item.product.price }}€</span>
+                </li>
                 {% endfor %}
             </ul>
             <h5 class="mt-4">Update Order Status:</h5>

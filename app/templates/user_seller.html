@@ -1,16 +1,16 @@
 {% extends "base_seller.html" %}
-{% block title %}Profilo di {{ user.first_name }} {{ user.last_name }}{% endblock %}
+{% block title %}Profile of {{ user.first_name }} {{ user.last_name }}{% endblock %}
 {% block page_content %}
 <div class="profile-container">
-    <h1>Profilo di {{ user.first_name }} {{ user.last_name }}</h1>
+    <h1>Profile of {{ user.first_name }} {{ user.last_name }}</h1>
     <p><strong>Email:</strong> {{ user.email }}</p>
-    <p><strong>Nome:</strong> {{ user.first_name }} {{ user.last_name }}</p>
-    <p><strong>Data di registrazione:</strong> {{ user.created_at.strftime('%d/%m/%Y') }}</p>
-    <a href="{{ url_for('main.seller_edit_profile') }}" class="btn btn-primary mt-3">Edit profile</a>
+    <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+    <p><strong>Registration Date:</strong> {{ user.created_at.strftime('%d/%m/%Y') }}</p>
+    <a href="{{ url_for('main.seller_edit_profile') }}" class="btn btn-primary mt-3">Edit Profile</a>
     {% if not is_buyer %}
         <a href="{{ url_for('auth.add_user_type_buyer') }}" class="btn btn-primary mt-3">Start Shopping</a>
     {% else %}
-        <a href="{{ url_for('main.switch_to_buyer', user_id=user.id) }}" class="btn btn-primary mt-3" onclick="confirmSwitch(event)">Switch to buyer mode</a>
+        <a href="{{ url_for('main.switch_to_buyer', user_id=user.id) }}" class="btn btn-primary mt-3" onclick="confirmSwitch(event)">Switch to Buyer Mode</a>
     {% endif %}
 </div>
 
