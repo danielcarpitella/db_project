@@ -12,7 +12,12 @@
             <p><strong>Order #{{ store_order.order_id }}</strong></p>
             <p><strong>Status:</strong> {{ store_order.order_status }}</p>
             <p><strong>Placed on:</strong> {{ store_order.order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-            <p><strong>Total:</strong> {{ "{:.2f}".format(store_order.order.total) }}€</p>
+            {% set seller_total_list = [] %}
+            {% for item in products_ordered %}
+                {% set _ = seller_total_list.append(item.product.price * item.quantity) %}
+            {% endfor %}
+            {% set seller_total = seller_total_list | sum %}
+            <p><strong>Total:</strong> {{ "{:.2f}".format(seller_total) }}€</p>
             <h5 class="mt-4">Products Ordered:</h5>
             <ul class="list-group">
                 {% for item in products_ordered %}
