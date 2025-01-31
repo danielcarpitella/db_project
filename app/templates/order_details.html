@@ -2,21 +2,27 @@
 {% block title %}Order Details{% endblock %}
 {% block page_content %}
 <div class="container mt-5">
-    <h2>Order Details</h2>
+    <h1 class="mt-4">Order details</h1>
+    
     <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Order #{{ store_order.id }}</h5>
-        </div>
+        <h2>Seller: {{ store_order.seller.store_name }}</h2>
+        
+
         <div class="card-body">
-            <p><strong>Seller:</strong> {{ store_order.seller.store_name }}</p>
+            <p><strong>Order #{{ store_order.order_id }}</strong></p>
             <p><strong>Status:</strong> {{ store_order.order_status }}</p>
             <p><strong>Placed on:</strong> {{ store_order.order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+            <p><strong>Total:</strong> {{ "{:.2f}".format(store_order.order.total) }}€</p>
             <h5 class="mt-4">Products Ordered:</h5>
-            <ul>
+            <ul class="list-group">
                 {% for item in products_ordered %}
-                <li><a href="{{ url_for('products.single_product', product_id=item.product.id) }}">
-                    {{ item.product.name }}
-                </a> - Quantity: {{ item.quantity }} - Price: {{ item.product.price }}€</li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="{{ url_for('products.single_product', product_id=item.product.id) }}">
+                        {{ item.product.name }}
+                    </a>
+                    <span>Quantity: {{ item.quantity }}</span>
+                    <span>Price: {{ item.product.price }}€</span>
+                </li>
                 {% endfor %}
             </ul>
         </div>
