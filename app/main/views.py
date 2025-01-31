@@ -9,7 +9,8 @@ from app.decorators import seller_required, buyer_required
 
 @main.route('/')
 def index():
-    return render_template('index.html')
+    # return render_template('index.html')
+    return redirect(url_for('products.all_products'))
 
 
 @main.route('/user/<username>')
