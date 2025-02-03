@@ -20,7 +20,7 @@ def product_review(product_id):
         .filter(
             ProductOrderQuantity.product_id == product_id,
             Order.user_id == current_user.id,
-            # SellerOrder.order_status == 'Delivered'  # se commentato: sufficiente che sia stato acquistato; se non commentato: deve essere consegnato
+            SellerOrder.order_status == 'Delivered'  # il prodotto deve essere consegnato
         )
         .first()
     ):
