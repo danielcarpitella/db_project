@@ -68,11 +68,6 @@ def single_product(product_id):
             User.id == current_user.id
         ).first()
 
-    # todo: pensare: senza wtf (cioè com'è adesso) se ricarico la pagina non mi dice niente di male
-    # ma se torno indietro mi torna indietro passo per passo ogni filtro che ho applicato
-    # con wtf se ricarico la pagina mi dice che ci sono informazioni che verranno reinviate
-    # ma se torno indietro va alla pagina precedente senza scorrere tra i filtri applicati
-
     # dati sulle recensioni (escludendo l'utente corrente) con filtri
     star_rating = request.args.get('star_rating', 'all')
     reviews_query = db.session.query(Review, User).join(User, Review.user_id == User.id).filter(
